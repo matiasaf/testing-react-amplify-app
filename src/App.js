@@ -108,7 +108,7 @@ function App() {
                 </button>
               </div>
             ))}
-          {loader && <i className="fas fa-circle-notch fa-spin fa-5x"></i>}
+          {loader && <i className="fas fa-circle-notch fa-spin fa-5x spinner"></i>}
         </div>
       </div>
     </div>
