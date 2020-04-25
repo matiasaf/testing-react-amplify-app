@@ -6,7 +6,7 @@ function App() {
   const [todos, setTodos] = useState(null);
   const [newTodo, setNewTodo] = useState(null);
   const getItems = async () => {
-    const res = await axios.get('todos');
+    const res = await axios.get(`${API_URL}/todos`);
     setTodos(res.data);
   };
   const handleChangeValue = async (todo) => {
@@ -15,20 +15,20 @@ function App() {
       else return _todo;
     });
     setTodos(_todos);
-    await axios.put(`todos/${todo.id}`, {
+    await axios.put(`${API_URL}/todos/${todo.id}`, {
       id: todo.id,
       text: todo.text,
       checked: !todo.checked,
     });
   };
   const handleDeleteItem = async (todo) => {
-    await axios.delete(`todos/${todo.id}`);
+    await axios.delete(`${API_URL}/todos/${todo.id}`);
     const _todos = todos.filter((_todo) => _todo.id !== todo.id);
     setTodos(_todos);
   };
   const handleChangeText = (value) => setNewTodo(value);
   const handleCreateTodo = async () => {
-    const res = await axios.post('todos', { text: newTodo });
+    const res = await axios.post(`${API_URL}/todos`, { text: newTodo });
     setTodos([...todos, res.data]);
   };
   
