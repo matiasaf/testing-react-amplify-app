@@ -6,30 +6,32 @@ function App() {
   const [todos, setTodos] = useState(null);
   const [newTodo, setNewTodo] = useState(null);
   const getItems = async () => {
-    const res = await axios.get(`${API_URL}/todos`);
+    const res = await axios.get('https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos');
     setTodos(res.data);
   };
   const handleChangeValue = async (todo) => {
     const _todos = todos.map((_todo) => {
-      if (_todo.id === todo.id) return { ...todo, checked: !todo.checked };
+      if (_todo.id == todo.id) return { ...todo, checked: !todo.checked };
       else return _todo;
     });
     setTodos(_todos);
-    await axios.put(`${API_URL}/todos/${todo.id}`, {
+    await axios.put(`https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`, {
       id: todo.id,
       text: todo.text,
       checked: !todo.checked,
     });
   };
   const handleDeleteItem = async (todo) => {
-    await axios.delete(`${API_URL}/todos/${todo.id}`);
+    await axios.delete(`https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`);
     const _todos = todos.filter((_todo) => _todo.id !== todo.id);
     setTodos(_todos);
   };
   const handleChangeText = (value) => setNewTodo(value);
   const handleCreateTodo = async () => {
-    const res = await axios.post(`${API_URL}/todos`, { text: newTodo });
-    setTodos([...todos, res.data]);
+    setTodos([...todos, {text: newTodo, checked: false}]);
+    const res = await axios.post('https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos', { text: newTodo });
+    const newTodos = todos.map(_todo => { if(_todo.text !== newTodo) return res.data; else return _todo})
+    setTodos(newTodos);
   };
   
   useEffect(() => {
