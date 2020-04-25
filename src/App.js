@@ -5,8 +5,13 @@ import './App.css';
 function App() {
   const [todos, setTodos] = useState(null);
   const [newTodo, setNewTodo] = useState(null);
+  const [loader, setLoader] = useState(null);
   const getItems = async () => {
-    const res = await axios.get('https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos');
+    setLoader(true);
+    const res = await axios.get(
+      'https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos'
+    );    
+    setLoader(false);
     setTodos(res.data);
   };
   const handleChangeValue = async (todo) => {
@@ -15,29 +20,37 @@ function App() {
       else return _todo;
     });
     setTodos(_todos);
-    await axios.put(`https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`, {
-      id: todo.id,
-      text: todo.text,
-      checked: !todo.checked,
-    });
+    await axios.put(
+      `https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`,
+      {
+        id: todo.id,
+        text: todo.text,
+        checked: !todo.checked,
+      }
+    );
   };
   const handleDeleteItem = async (todo) => {
-    await axios.delete(`https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`);
     const _todos = todos.filter((_todo) => _todo.id !== todo.id);
     setTodos(_todos);
+    await axios.delete(
+      `https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos/${todo.id}`
+    );
   };
   const handleChangeText = (value) => setNewTodo(value);
   const handleCreateTodo = async () => {
-    setTodos([...todos, {text: newTodo, checked: false}]);
-    const res = await axios.post('https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos', { text: newTodo });
-    const newTodos = todos.map(_todo => { if(_todo.text !== newTodo) return res.data; else return _todo})
-    setTodos(newTodos);
+    setLoader(true);
+    const res = await axios.post(
+      'https://m8occ5xqx1.execute-api.us-east-2.amazonaws.com/dev/todos',
+      { text: newTodo }
+    );
+    setLoader(false);
+    setTodos([...todos, res.data]);
   };
-  
+
   useEffect(() => {
     getItems();
   }, []);
-  
+
   return (
     <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
       <div className="bg-white rounded shadow p-6 m-4 w-full lg:w-3/4 lg:max-w-lg">
@@ -95,6 +108,7 @@ function App() {
                 </button>
               </div>
             ))}
+          {loader && <i className="fas fa-circle-notch fa-spin fa-5x"></i>}
         </div>
       </div>
     </div>
